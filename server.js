@@ -30,7 +30,7 @@ const messages = new Map(); // room -> [сообщения]
 const reactions = new Map(); // messageId -> реакции
 const polls = new Map(); // pollId -> опрос
 
-const PORT = process.env.PORT || 8080;
+const PORT = process.env.PORT || 9999;
 
 // Цвета для аватарок
 const AVATAR_COLORS = [
