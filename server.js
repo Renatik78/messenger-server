@@ -30,7 +30,7 @@ const messages = new Map(); // room -> [сообщения]
 const reactions = new Map(); // messageId -> реакции
 const polls = new Map(); // pollId -> опрос
 
-const PORT = 8080;
+const PORT = process.env.PORT || 8080;
 
 // Цвета для аватарок
 const AVATAR_COLORS = [
@@ -786,7 +786,7 @@ if (!fs.existsSync(path.join(__dirname, 'uploads'))) {
 
 server.listen(PORT, '0.0.0.0', () => {
     console.log('🚀 ULTRA MESSENGER ЗАПУЩЕН!');
-    console.log('📱 Порт: 8080');
+    console.log(`📱 Порт: ${PORT}`);
     console.log('✨ Функции:');
     console.log('   ✅ Профили с аватарками');
     console.log('   ✅ Статусы (онлайн/отошел/занят)');
