@@ -1,0 +1,717 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Ultra Messenger PRO</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { 
+            font-family: 'Segoe UI', Arial; 
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        .app-container {
+            width: 1400px;
+            max-width: 100%;
+            height: 800px;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            display: flex;
+            overflow: hidden;
+        }
+        .sidebar {
+            width: 350px;
+            background: #f8fafc;
+            border-right: 2px solid #e2e8f0;
+            display: flex;
+            flex-direction: column;
+        }
+        .user-profile {
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        .avatar {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            font-weight: bold;
+            color: white;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        .avatar:hover {
+            transform: scale(1.1);
+        }
+        .user-info {
+            flex: 1;
+        }
+        .user-name {
+            font-size: 18px;
+            font-weight: bold;
+        }
+        .user-status {
+            font-size: 14px;
+            opacity: 0.9;
+            margin-top: 5px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        .status-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            display: inline-block;
+        }
+        .status-online { background: #48bb78; }
+        .status-away { background: #ed8936; }
+        .status-busy { background: #f56565; }
+        
+        .sections {
+            flex: 1;
+            overflow-y: auto;
+            padding: 15px;
+        }
+        .section {
+            margin-bottom: 20px;
+        }
+        .section-title {
+            font-weight: bold;
+            color: #4a5568;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .room-item, .user-item {
+            padding: 12px;
+            margin: 5px 0;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .room-item {
+            background: #edf2f7;
+        }
+        .room-item:hover, .user-item:hover {
+            background: #e2e8f0;
+        }
+        .room-item.active {
+            background: #667eea;
+            color: white;
+        }
+        .user-avatar-small {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+        }
+        .chat-area {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+        .chat-header {
+            padding: 20px;
+            border-bottom: 2px solid #e2e8f0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .room-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        .room-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: #667eea;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 24px;
+        }
+        .room-details h2 {
+            font-size: 18px;
+            color: #4a5568;
+        }
+        .room-details p {
+            font-size: 14px;
+            color: #718096;
+        }
+        .messages-container {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+            background: #f7fafc;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .message {
+            display: flex;
+            gap: 10px;
+            max-width: 70%;
+            animation: fadeIn 0.3s;
+            position: relative;
+        }
+        .my-message {
+            align-self: flex-end;
+            flex-direction: row-reverse;
+        }
+        .message-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            flex-shrink: 0;
+        }
+        .message-content {
+            background: white;
+            padding: 12px 15px;
+            border-radius: 15px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            position: relative;
+        }
+        .my-message .message-content {
+            background: #667eea;
+            color: white;
+        }
+        .message-header {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 5px;
+            font-size: 12px;
+        }
+        .message-sender {
+            font-weight: bold;
+            color: #4a5568;
+        }
+        .my-message .message-sender {
+            color: #e2e8f0;
+        }
+        .message-time {
+            color: #a0aec0;
+        }
+        .message-reactions {
+            display: flex;
+            gap: 5px;
+            margin-top: 5px;
+        }
+        .reaction {
+            background: #edf2f7;
+            padding: 2px 8px;
+            border-radius: 20px;
+            font-size: 12px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 3px;
+        }
+        .reaction:hover {
+            background: #e2e8f0;
+        }
+        .input-area {
+            padding: 20px;
+            background: white;
+            border-top: 2px solid #e2e8f0;
+        }
+        .input-container {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+        .message-input {
+            flex: 1;
+            padding: 12px;
+            border: 2px solid #e2e8f0;
+            border-radius: 10px;
+            font-size: 14px;
+            outline: none;
+        }
+        .message-input:focus {
+            border-color: #667eea;
+        }
+        .send-button {
+            padding: 12px 30px;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        .emoji-panel {
+            display: flex;
+            gap: 5px;
+            flex-wrap: wrap;
+        }
+        .emoji {
+            font-size: 24px;
+            cursor: pointer;
+            padding: 5px;
+            border-radius: 5px;
+            transition: 0.3s;
+        }
+        .emoji:hover {
+            background: #edf2f7;
+            transform: scale(1.2);
+        }
+        .login-screen {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            width: 100vw;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+        }
+        .login-box {
+            background: white;
+            padding: 40px;
+            border-radius: 20px;
+            text-align: center;
+            width: 400px;
+        }
+        .login-box h2 {
+            margin-bottom: 20px;
+            color: #4a5568;
+        }
+        .login-input {
+            width: 100%;
+            padding: 12px;
+            margin: 10px 0;
+            border: 2px solid #e2e8f0;
+            border-radius: 10px;
+            font-size: 16px;
+        }
+        .color-picker {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            margin: 15px 0;
+            flex-wrap: wrap;
+        }
+        .color-option {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            cursor: pointer;
+            border: 3px solid transparent;
+            transition: 0.3s;
+        }
+        .color-option:hover {
+            transform: scale(1.1);
+        }
+        .color-option.selected {
+            border-color: #4a5568;
+        }
+        .login-button {
+            width: 100%;
+            padding: 12px;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: #48bb78;
+            color: white;
+            padding: 15px 20px;
+            border-radius: 10px;
+            animation: slideIn 0.3s;
+            z-index: 1000;
+        }
+        @keyframes slideIn {
+            from { transform: translateX(100%); }
+            to { transform: translateX(0); }
+        }
+        .hidden { display: none; }
+        .system-message {
+            align-self: center;
+            background: #e2e8f0;
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-size: 12px;
+            color: #4a5568;
+        }
+        .file-message {
+            background: #edf2f7;
+            padding: 10px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .file-icon {
+            font-size: 24px;
+        }
+        .file-name {
+            font-weight: bold;
+        }
+        .file-size {
+            font-size: 12px;
+            color: #718096;
+        }
+    </style>
+</head>
+<body>
+    <div id="loginScreen" class="login-screen">
+        <div class="login-box">
+            <h2>🚀 Ultra Messenger PRO</h2>
+            <input type="text" id="username" class="login-input" placeholder="Ваше имя">
+            <div class="color-picker" id="colorPicker"></div>
+            <button onclick="login()" class="login-button">Войти в чат</button>
+        </div>
+    </div>
+
+    <div id="appContainer" class="app-container hidden">
+        <div class="sidebar">
+            <div class="user-profile">
+                <div class="avatar" id="userAvatar" style="background: #667eea">U</div>
+                <div class="user-info">
+                    <div class="user-name" id="currentUserName">Загрузка...</div>
+                    <div class="user-status" id="userStatus">
+                        <span class="status-dot status-online"></span>
+                        Онлайн
+                    </div>
+                    <div class="user-bio" id="userBio"></div>
+                </div>
+            </div>
+            
+            <div class="sections">
+                <div class="section">
+                    <div class="section-title">
+                        📢 Комнаты
+                        <button class="add-room" onclick="createRoom()">+</button>
+                    </div>
+                    <div id="roomsList"></div>
+                </div>
+                
+                <div class="section">
+                    <div class="section-title">
+                        👥 Пользователи
+                    </div>
+                    <div id="usersList"></div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="chat-area">
+            <div class="chat-header">
+                <div class="room-info">
+                    <div class="room-avatar" id="currentRoomIcon">#</div>
+                    <div class="room-details">
+                        <h2 id="currentRoomName">Общий чат</h2>
+                        <p id="roomMemberCount">0 участников</p>
+                    </div>
+                </div>
+                <div class="room-actions">
+                    <button onclick="showCommands()" class="send-button">/help</button>
+                </div>
+            </div>
+            
+            <div class="messages-container" id="messagesContainer"></div>
+            
+            <div class="input-area">
+                <div class="input-container">
+                    <input type="text" id="messageInput" class="message-input" 
+                           placeholder="Введите сообщение... ( /help для команд )">
+                    <button onclick="sendMessage()" class="send-button">➤</button>
+                </div>
+                <div class="emoji-panel" id="emojiPanel"></div>
+            </div>
+        </div>
+    </div>
+
+    <div id="notification" class="notification hidden"></div>
+
+    <script>
+        const AVATAR_COLORS = [
+            '#FF6B6B', '#4ECDC4', '#45B7D1', '#96CEB4', '#FFEEAD',
+            '#D4A5A5', '#9B59B6', '#3498DB', '#E67E22', '#2ECC71'
+        ];
+        
+        const EMOJIS = ['😊', '😂', '❤️', '👍', '🎉', '🔥', '😎', '🥰', '😢', '👋'];
+        
+        let socket = null;
+        let currentUser = { id: null, name: '', avatarColor: '#667eea' };
+        let users = new Map();
+        let rooms = new Set(['general']);
+        let selectedColor = '#667eea';
+        let messageHistory = [];
+        
+        // Инициализация выбора цвета
+        const colorPicker = document.getElementById('colorPicker');
+        AVATAR_COLORS.forEach(color => {
+            const div = document.createElement('div');
+            div.className = 'color-option';
+            div.style.background = color;
+            div.onclick = () => {
+                document.querySelectorAll('.color-option').forEach(el => el.classList.remove('selected'));
+                div.classList.add('selected');
+                selectedColor = color;
+            };
+            colorPicker.appendChild(div);
+        });
+        
+        // Инициализация эмодзи
+        const emojiPanel = document.getElementById('emojiPanel');
+        EMOJIS.forEach(emoji => {
+            const span = document.createElement('span');
+            span.className = 'emoji';
+            span.textContent = emoji;
+            span.onclick = () => {
+                document.getElementById('messageInput').value += emoji;
+            };
+            emojiPanel.appendChild(span);
+        });
+        
+        function login() {
+            const name = document.getElementById('username').value.trim();
+            if (!name) {
+                showNotification('Введите имя!', 'error');
+                return;
+            }
+            
+            socket = new WebSocket('ws://localhost:8080');
+            
+            socket.onopen = () => {
+                socket.send(JSON.stringify({
+                    type: 'login',
+                    name: name,
+                    avatarColor: selectedColor
+                }));
+            };
+            
+            socket.onmessage = (event) => {
+                const message = JSON.parse(event.data);
+                handleMessage(message);
+            };
+            
+            socket.onerror = (error) => {
+                showNotification('Ошибка подключения к серверу!', 'error');
+            };
+        }
+        
+        function handleMessage(message) {
+            switch(message.type) {
+                case 'login_success':
+                    currentUser = message.user;
+                    document.getElementById('loginScreen').classList.add('hidden');
+                    document.getElementById('appContainer').classList.remove('hidden');
+                    document.getElementById('currentUserName').textContent = currentUser.name;
+                    document.getElementById('userAvatar').style.background = currentUser.avatarColor;
+                    document.getElementById('userAvatar').textContent = currentUser.name.charAt(0);
+                    showNotification('👋 Добро пожаловать!');
+                    break;
+                    
+                case 'message':
+                    addMessage(message);
+                    break;
+                    
+                case 'system':
+                    addSystemMessage(message.content);
+                    break;
+                    
+                case 'user_list':
+                    updateUsersList(message.users);
+                    break;
+                    
+                case 'room_list':
+                    updateRoomsList(message.rooms);
+                    break;
+                    
+                case 'message_history':
+                    message.messages.forEach(msg => addMessage(msg));
+                    break;
+                    
+                case 'notification':
+                    showNotification(message.message);
+                    break;
+                    
+                case 'command_response':
+                    addSystemMessage(message.content);
+                    break;
+                    
+                case 'clear_chat':
+                    document.getElementById('messagesContainer').innerHTML = '';
+                    break;
+                    
+                case 'error':
+                    showNotification(message.message, 'error');
+                    break;
+            }
+        }
+        
+        function sendMessage() {
+            const input = document.getElementById('messageInput');
+            const content = input.value.trim();
+            
+            if (!content || !socket) return;
+            
+            socket.send(JSON.stringify({
+                type: 'message',
+                content: content
+            }));
+            
+            input.value = '';
+        }
+        
+        function addMessage(message) {
+            const container = document.getElementById('messagesContainer');
+            const msgDiv = document.createElement('div');
+            const isMyMessage = message.userId === currentUser.id;
+            
+            msgDiv.className = `message ${isMyMessage ? 'my-message' : ''}`;
+            
+            msgDiv.innerHTML = `
+                <div class="message-avatar" style="background: ${message.userAvatar || '#667eea'}">
+                    ${message.userName ? message.userName.charAt(0) : '?'}
+                </div>
+                <div class="message-content">
+                    <div class="message-header">
+                        <span class="message-sender">${message.userName || 'Система'}</span>
+                        <span class="message-time">${message.time || new Date().toLocaleTimeString()}</span>
+                    </div>
+                    <div class="message-text">${message.content}</div>
+                    ${message.reactions ? `
+                        <div class="message-reactions">
+                            ${message.reactions.map(r => `
+                                <span class="reaction">${r.emoji} ${r.count}</span>
+                            `).join('')}
+                        </div>
+                    ` : ''}
+                </div>
+            `;
+            
+            container.appendChild(msgDiv);
+            container.scrollTop = container.scrollHeight;
+        }
+        
+        function addSystemMessage(content) {
+            const container = document.getElementById('messagesContainer');
+            const msgDiv = document.createElement('div');
+            msgDiv.className = 'system-message';
+            msgDiv.textContent = content;
+            container.appendChild(msgDiv);
+            container.scrollTop = container.scrollHeight;
+        }
+        
+        function updateUsersList(userList) {
+            users.clear();
+            userList.forEach(u => users.set(u.id, u));
+            
+            const container = document.getElementById('usersList');
+            let html = '';
+            
+            users.forEach(user => {
+                if (user.id !== currentUser.id) {
+                    html += `
+                        <div class="user-item" onclick="startPrivateChat('${user.id}', '${user.name}')">
+                            <div class="user-avatar-small" style="background: ${user.avatarColor}">
+                                ${user.name.charAt(0)}
+                            </div>
+                            <div>
+                                <div>${user.name}</div>
+                                <small>${user.status || 'online'}</small>
+                            </div>
+                        </div>
+                    `;
+                }
+            });
+            
+            container.innerHTML = html;
+            document.getElementById('roomMemberCount').textContent = `${users.size} участников`;
+        }
+        
+        function updateRoomsList(roomList) {
+            rooms = new Set(roomList);
+            const container = document.getElementById('roomsList');
+            let html = '';
+            
+            rooms.forEach(room => {
+                html += `
+                    <div class="room-item" onclick="joinRoom('${room}')">
+                        ${room === 'general' ? '📢' : '💬'} ${room}
+                    </div>
+                `;
+            });
+            
+            container.innerHTML = html;
+        }
+        
+        function joinRoom(roomName) {
+            socket.send(JSON.stringify({
+                type: 'join_room',
+                roomName: roomName
+            }));
+        }
+        
+        function createRoom() {
+            const roomName = prompt('Введите название комнаты:');
+            if (roomName && roomName.trim()) {
+                socket.send(JSON.stringify({
+                    type: 'create_room',
+                    roomName: roomName.trim()
+                }));
+            }
+        }
+        
+        function startPrivateChat(userId, userName) {
+            showNotification(`Личный чат с ${userName}`);
+        }
+        
+        function showCommands() {
+            addSystemMessage('📋 Команды: /help, /time, /date, /users, /clear, /bio, /status, /roll, /joke, /quote, /weather');
+        }
+        
+        function showNotification(text, type = 'info') {
+            const notification = document.getElementById('notification');
+            notification.textContent = text;
+            notification.style.background = type === 'error' ? '#f56565' : '#48bb78';
+            notification.classList.remove('hidden');
+            
+            setTimeout(() => {
+                notification.classList.add('hidden');
+            }, 3000);
+        }
+        
+        // Отправка по Enter
+        document.getElementById('messageInput').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') sendMessage();
+        });
+    </script>
+</body>
+</html>
