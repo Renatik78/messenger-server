@@ -784,7 +784,7 @@ if (!fs.existsSync(path.join(__dirname, 'uploads'))) {
     fs.mkdirSync(path.join(__dirname, 'uploads'));
 }
 
-server.listen(PORT, () => {
+server.listen(PORT, '0.0.0.0', () => {
     console.log('🚀 ULTRA MESSENGER ЗАПУЩЕН!');
     console.log('📱 Порт: 8080');
     console.log('✨ Функции:');
